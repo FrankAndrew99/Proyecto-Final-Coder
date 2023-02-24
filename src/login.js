@@ -35,7 +35,11 @@ function alerta(mensaje, pigmento) {
 
 //LOGIN
 
+//DOM
+
 let formLogin = document.getElementById("form-login")
+
+//EVENTOS
 
 formLogin.addEventListener("submit", iniciarSesion)
 

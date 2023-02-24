@@ -5,13 +5,13 @@ function verTienda() {
         const {id,nombre,precio,imagen,descripcion} = prod
         listaProductos.innerHTML += `
             <div class="card bg-card card-producto" style="width: 16rem;">
-                <img src="${imagen}" class="card-img-top px-2 py-2" alt="...">
+                <img src="${imagen}" class="card-img-top py-2" alt="...">
                 <div class="card-body">
-                    <h4 class="card-title color login-text">$ ${precio}</h4>
-                    <h5 class="card-title color color-titulo">${nombre}</h5>
-                    <p class="card-text">${descripcion}</p>
-                    <button class="btn btn-primary" id="ver-producto-btn">Ver Producto</button>
-                    <button onclick="enviarCarrito(${id})" class="btn btn-primary">Agregar al Carrito</button>
+                    <h4 class="card-title color login-text comentario-precio">$ ${precio}</h4>
+                    <h5 class="card-title color color-titulo comentario-descripcion ">${nombre}</h5>
+                    <p class="card-text color-desc">${descripcion}</p>
+                    <button onclick="verProductos(${id})" class="btn btn-primary btn-ver-producto" id="ver-producto-btn">Ver Producto</button>
+                    <button onclick="enviarCarrito(${id})" class="btn btn-primary btn-agregar-carrito">Agregar al Carrito</button>
                 </div>
             </div>   
        `
@@ -29,9 +29,18 @@ function irAlInicio() {
 }
 
 function enviarCarrito(id) {
-    let item = stock.find((prod) => prod.id === id)
-    carrito.push(item)
-    alerta("Producto agregado","rgb(130, 255, 138)")
+    let repetido = carrito.some((prod) => prod.id === id)
+    if (repetido) {
+        const nuevoCarrito = carrito.map(prod => {
+            if (prod.id === id) {
+                prod.cantidad++
+            }
+        })
+    }else{
+        let item = stock.find((prod) => prod.id === id)
+        carrito.push(item)
+    }
+    alertaCarrito("Producto agregado","rgb(130, 255, 138)")
     verCarrito()
 }
 
@@ -39,7 +48,7 @@ function verCarrito() {
     let modalBody = document.getElementById("modal-carrito")
     modalBody.innerHTML = ""
     carrito.forEach((prod) => {
-        const {id,imagen,nombre,precio} = prod
+        const {id,imagen,nombre,precio,cantidad} = prod
         modalBody.innerHTML += `
         <div class="modal-container">
             <div>
@@ -49,6 +58,7 @@ function verCarrito() {
             <div>
                 <p class="color-info-carrito"><span class="color-item-carrito">Producto:</span> ${nombre}</p>
                 <p class="color-info-carrito"><span class="color-item-carrito">Precio:</span> $ ${precio}</p>
+                <p class="color-info-carrito"><span class="color-item-carrito">Cantidad:</span> ${cantidad}</p>
             </div>
 
             <button onclick="eliminarProdCarrito(${id})"class="btn btn-danger btn-eliminar-producto">
@@ -60,10 +70,17 @@ function verCarrito() {
         <hr>
         `
     })
+
+    if (carrito.length === 0) {
+        modalBody.innerHTML = `<p class="text-center" style="color: blue;">No hay productos agregados</p>`
+    }
+
+    precioTotal.innerText = carrito.reduce((acc,prod) => acc + prod.cantidad * prod.precio,0)
+
     guardarCarrito()
 }
 
-function alerta(mensaje, pigmento) {
+function alertaCarrito(mensaje, pigmento) {
     Toastify({
         text: mensaje,
         duration: 1100,
@@ -91,11 +108,11 @@ function verGuitarras() {
             <div class="card bg-card card-producto" style="width: 16rem;">
                 <img src="${imagen}" class="card-img-top px-2 py-2" alt="...">
                 <div class="card-body">
-                    <h4 class="card-title color login-text">$ ${precio}</h4>
-                    <h5 class="card-title color color-titulo">${nombre}</h5>
+                    <h4 class="card-title color login-text comentario-precio">$ ${precio}</h4>
+                    <h5 class="card-title color color-titulo comentario-descripcion">${nombre}</h5>
                     <p class="card-text">${descripcion}</p>
-                    <button class="btn btn-primary" id="ver-producto-btn">Ver Producto</button>
-                    <button onclick="enviarCarrito(${id})" class="btn btn-primary">Agregar al Carrito</button>
+                    <button onclick="verProductos(${id})" class="btn btn-primary btn-ver-producto" id="ver-producto-btn">Ver Producto</button>
+                    <button onclick="enviarCarrito(${id})" class="btn btn-primary btn-agregar-carrito">Agregar al Carrito</button>
                 </div>
             </div>   
             `       
@@ -112,11 +129,11 @@ function verPianos() {
             <div class="card bg-card card-producto" style="width: 16rem;">
                 <img src="${imagen}" class="card-img-top px-2 py-2" alt="...">
                 <div class="card-body">
-                    <h4 class="card-title color login-text">$ ${precio}</h4>
-                    <h5 class="card-title color color-titulo">${nombre}</h5>
+                    <h4 class="card-title color login-text comentario-precio">$ ${precio}</h4>
+                    <h5 class="card-title color color-titulo comentario-descripcion">${nombre}</h5>
                     <p class="card-text">${descripcion}</p>
-                    <button class="btn btn-primary" id="ver-producto-btn">Ver Producto</button>
-                    <button onclick="enviarCarrito(${id})" class="btn btn-primary">Agregar al Carrito</button>
+                    <button onclick="verProductos(${id})" class="btn btn-primary btn-ver-producto" id="ver-producto-btn">Ver Producto</button>
+                    <button onclick="enviarCarrito(${id})" class="btn btn-primary btn-agregar-carrito">Agregar al Carrito</button>
                 </div>
             </div>   
             `       
@@ -133,11 +150,11 @@ function verBaterias() {
             <div class="card bg-card card-producto" style="width: 16rem;">
                 <img src="${imagen}" class="card-img-top px-2 py-2" alt="...">
                 <div class="card-body">
-                    <h4 class="card-title color login-text">$ ${precio}</h4>
-                    <h5 class="card-title color color-titulo">${nombre}</h5>
+                    <h4 class="card-title color login-text comentario-precio">$ ${precio}</h4>
+                    <h5 class="card-title color color-titulo comentario-descripcion">${nombre}</h5>
                     <p class="card-text">${descripcion}</p>
-                    <button class="btn btn-primary" id="ver-producto-btn">Ver Producto</button>
-                    <button onclick="enviarCarrito(${id})" class="btn btn-primary">Agregar al Carrito</button>
+                    <button onclick="verProductos(${id})" class="btn btn-primary btn-ver-producto" id="ver-producto-btn">Ver Producto</button>
+                    <button onclick="enviarCarrito(${id})" class="btn btn-primary btn-agregar-carrito">Agregar al Carrito</button>
                 </div>
             </div>   
             `       
@@ -159,6 +176,24 @@ function guardarCarrito() {
     localStorage.setItem("tuCarrito", JSON.stringify(carrito))
 }
 
+function verProductos(id) {
+    localStorage.setItem("IdVerProducto", JSON.stringify(id))
+    localStorage.setItem("Stock", JSON.stringify(stock))
+    location.href = "detalles.html"
+}
+
+function borrarCarritoCompleto() {
+    carrito.splice(0,carrito.length)
+    verCarrito()
+}
+
+function procesarCompra() {
+    if (carrito.length === 0) {
+        alertaCarrito("Tu carrito esta vacio!","rgb(223, 176, 9)")
+    }else{
+        location.href = "compra.html"
+    }
+}
 //ARRAYS
 
 const stock = []
@@ -168,13 +203,15 @@ const carrito = []
 //CLASES
 
 class Producto {
-    constructor (id, nombre,precio,imagen,descripcion,categoria) {
+    constructor (id, nombre,precio,imagen,descripcion,detalles,categoria,cantidad) {
         this.id = id
         this.nombre = nombre
         this.precio = precio
         this.imagen = imagen
         this.descripcion = descripcion
+        this.detalles = detalles
         this.categoria = categoria
+        this.cantidad = cantidad
     }
 }
 
@@ -185,67 +222,86 @@ let producto1 = new Producto(
     "Fender Stratocaster",
     415000,
     "../img/fender Strat.jpg",
-    "Sonido limpio y excelente digitacion.",
-    "GUITARRA"
+    "Sonido limpio y hermosa digitacion.",
+    `Tiene un sonido cálido, cristalino, percusivo y con mucha textura. Su forma hace que sea el modelo que más se adapta al cuerpo humano, lo que otorga mayor versatilidad en su uso.`,
+    "GUITARRA",
+    1
 )
 let producto2 = new Producto(
+
     2,
     "G. Shelter (5 cuerpos)",
     252000,
     "../img/bateria.jpg",
-    "Agresividad y percucion lineal.",
-    "BATERIA"
+    "Excelente acustica y percucion lineal.",
+    `La mejor opción para los bateristas novatos que buscan una excelente calidad.Fabricadas sobre resistente álamo.`,
+    "BATERIA",
+    1
 )
 let producto3 = new Producto(
     3,
-    "Fender Stratocaster",
-    415000,
-    "../img/fender Strat.jpg",
-    "Sonido limpio y excelente digitacion.",
-    "GUITARRA"
+    "Fender Telecaster Roja",
+    635000,
+    "../img/fender Tele.jpg",
+    "Versatilidad, con y sin distorsion.",
+    `Tiene un sonido cálido, cristalino, percusivo y con mucha textura. Su forma hace que sea el modelo que más se adapta al cuerpo humano, lo que otorga mayor versatilidad en su uso.`,
+    "GUITARRA",
+    1
 )
 
 let producto4 = new Producto(
     4,
-    "Yamaha P-45",
+    "Yamaha P-45 Negro",
     347000,
     "../img/piano.jpg",
     "Excelente golpe de martillo y sensibilidad.",
-    "PIANO"
+    `El Yamaha P45 cuenta con un teclado estándar macillo clasificado (GHS), esta cama clave popular crea una sensación natural y auténtica cuando se toca. `,
+    "PIANO",
+    1
 )
 
 let producto5 = new Producto(
     5,
-    "Fender Stratocaster",
-    415000,
-    "../img/fender Strat.jpg",
-    "Sonido limpio y excelente digitacion.",
-    "GUITARRA"
+    "Gibson SG Black Edition",
+    387000,
+    "../img/gibson SG.jpg",
+    "Agresiva y comoda para cualquier riff.",
+    `Tiene un sonido cálido, cristalino, percusivo y con mucha textura. Su forma hace que sea el modelo que más se adapta al cuerpo humano, lo que otorga mayor versatilidad en su uso.`,
+    "GUITARRA",
+    1
 )
 let producto6 = new Producto(
     6,
-    "G. Shelter (5 cuerpos)",
-    252000,
-    "../img/bateria.jpg",
-    "Agresividad y percucion lineal.",
-    "BATERIA"
+    "G. Shelter (8 cuerpos)",
+    420000,
+    "../img/bateria-5.jpg",
+    "Semi profesional, primera calidad.",
+    `La mejor opción para los bateristas novatos que buscan una excelente calidad.Fabricadas sobre resistente álamo.`,
+    "BATERIA",
+    1
 )
 let producto7 = new Producto(
     7,
-    "Fender Stratocaster",
+    "Korg B1 - Roble & Marfil Edition",
     415000,
-    "../img/fender Strat.jpg",
+    "../img/korg.webp",
     "Sonido limpio y excelente digitacion.",
-    "GUITARRA"
+    `Este piano cuenta con teclas pesadas con sistema de martillo que reproduce la sensacion al tacto de un piano de manera natural.
+    `,
+    "PIANO",
+    1
 )
 
 let producto8 = new Producto(
     8,
-    "Yamaha P-45",
-    347000,
-    "../img/piano.jpg",
+    "Casio Privia con Mueble",
+    509000,
+    "../img/privia.jfif",
     "Excelente golpe de martillo y sensibilidad.",
-    "PIANO"
+    `Una evolución en el diseño, el sonido y la facilidad de uso de los PX-S1100 para una experiencia de interpretación excepcional.
+    Exprésese libremente mientras toca.`,
+    "PIANO",
+    1
 )
 
 stock.push(producto1, producto2, producto3, producto4, producto5, producto6, producto7, producto8)
@@ -262,8 +318,13 @@ let guitarras = document.getElementById("guitarras")
 let pianos = document.getElementById("pianos")
 let baterias = document.getElementById("baterias")
 let todos = document.getElementById("todos")
+let vaciarCarrito = document.getElementById("vaciar-carrito")
+let precioTotal = document.getElementById("precio-total")
+let finalizarCompra = document.getElementById("finalizar-compra")
 
 //EVENTOS
+
+document.innerHTML = 
 
 document.addEventListener("DOMContentLoaded", verTienda)
 
@@ -276,6 +337,11 @@ pianos.addEventListener("click", verPianos)
 baterias.addEventListener("click", verBaterias)
 
 todos.addEventListener("click", verTienda)
+
+vaciarCarrito.addEventListener("click", borrarCarritoCompleto)
+
+finalizarCompra.addEventListener("click", procesarCompra)
+
 
 
 
